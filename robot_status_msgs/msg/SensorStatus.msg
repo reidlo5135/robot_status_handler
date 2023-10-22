@@ -1,0 +1,3 @@
+std_msgs/Header header
+int32 status_code
+string status_message
