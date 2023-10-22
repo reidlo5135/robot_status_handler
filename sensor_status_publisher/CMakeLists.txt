@@ -21,7 +21,9 @@ include_directories(
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(robot_status_msgs REQUIRED)
 
 set(source_sets
   include/sensor_status_publisher/utils.hxx
@@ -31,7 +33,9 @@ set(source_sets
 
 set(dependencies
   rclcpp
+  std_msgs
   sensor_msgs
+  robot_status_msgs
 )
 
 set(executable_name publisher)
