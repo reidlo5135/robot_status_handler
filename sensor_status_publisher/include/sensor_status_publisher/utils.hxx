@@ -94,17 +94,24 @@ static constexpr const char *RCL_GPS_SUBSCRIPTION_TOPIC = "/ublox/fix";
 
 static constexpr const char *RCL_BATTERY_STATE_STATUS_HEADER_FRAME_ID = "battery_state_status";
 
-static constexpr const int32_t &RCL_BATTERY_STATE_STATUS_NULL_STATUS_CODE = -1003;
+static constexpr const int32_t &RCL_BATTERY_ERROR_STATUS_STATUS_CODE = -1003;
 
-static constexpr const char *RCL_BATTERY_STATE_STATUS_NULL_STATUS_MESSAGE = "Battery is NULL";
+static constexpr const char *RCL_BATTERY_STATE_ERROR_STATUS_MESSAGE = "Battery is Broken";
 
 static constexpr const int32_t &RCL_BATTERY_STATE_STATUS_OK_STATUS_CODE = 1003;
 
 static constexpr const char *RCL_BATTERY_STATE_STATUS_OK_STATUS_MESSAGE = "Battery is OK";
 
-static constexpr const char *RCL_BATTERY_STATE_STATUS_PUBLISHER_TOPIC = "/battery_state/status";
+static constexpr const char *RCL_BATTERY_STATE_STATUS_PUBLISHER_TOPIC = "/battery/state/status";
 
-static constexpr const char *RCL_BATTERY_STATE_SUBSCRIPTION_TOPIC = "/battery_state";
+static constexpr const char *RCL_BATTERY_ERROR_STATUS_SUBSCRIPTION_TOPIC = "/battery/err/status";
+
+static constexpr const int32_t &RCL_BATTERY_ALRAM_ERROR_STATUS_CODE = -1004;
+
+static constexpr const int32_t &RCL_BATTERY_MOTOR_POWER_LIMIT_STATUS_CODE = -1005;
+
+static constexpr const int32_t &RCL_BATTERY_PACK_ERROR_STATUS_CODE = -1006;
+
 
 /**
  * --------------------------------------------------.---

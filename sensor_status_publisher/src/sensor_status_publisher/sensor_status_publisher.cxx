@@ -93,17 +93,17 @@ sensor_status_publisher::StatusPublisher::StatusPublisher()
 
     this->flag_rcl_connections(RCL_PUBLISHER_FLAG, RCL_BATTERY_STATE_STATUS_PUBLISHER_TOPIC);
 
-    this->battery_state_subscription_cb_group_ = this->node_ptr_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    rclcpp::SubscriptionOptions battery_state_subscription_opts;
-    battery_state_subscription_opts.callback_group = this->battery_state_subscription_cb_group_;
+    this->battery_error_status_subscription_cb_group_ = this->node_ptr_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    rclcpp::SubscriptionOptions battery_error_status_subscription_opts;
+    battery_error_status_subscription_opts.callback_group = this->battery_error_status_subscription_cb_group_;
 
-    this->battery_state_subscription_ = this->node_ptr_->create_subscription<sensor_msgs::msg::BatteryState>(
-        RCL_BATTERY_STATE_SUBSCRIPTION_TOPIC,
+    this->battery_error_status_subscription_ = this->node_ptr_->create_subscription<robot_status_msgs::msg::SensorStatus>(
+        RCL_BATTERY_ERROR_STATUS_SUBSCRIPTION_TOPIC,
         rclcpp::SensorDataQoS(),
-        std::bind(&sensor_status_publisher::StatusPublisher::battery_state_subscription_cb, this, _1),
-        battery_state_subscription_opts);
+        std::bind(&sensor_status_publisher::StatusPublisher::battery_error_status_subscription_cb, this, _1),
+        battery_error_status_subscription_opts);
 
-    this->flag_rcl_connections(RCL_SUBSCRIPTION_FLAG, RCL_BATTERY_STATE_SUBSCRIPTION_TOPIC);
+    this->flag_rcl_connections(RCL_SUBSCRIPTION_FLAG, RCL_BATTERY_ERROR_STATUS_SUBSCRIPTION_TOPIC);
 }
 
 sensor_status_publisher::StatusPublisher::~StatusPublisher()
@@ -208,34 +208,6 @@ void sensor_status_publisher::StatusPublisher::timer_callback()
         this->gps_status_publisher_->publish(gps_ok_status);
         this->gps_cb_ = nullptr;
     }
-
-    bool is_battery_state_cb_nullptr = (this->battery_state_cb_ == nullptr);
-
-    if (is_battery_state_cb_nullptr)
-    {
-        RCLCPP_ERROR(this->node_ptr_->get_logger(), RCL_BATTERY_STATE_STATUS_NULL_STATUS_MESSAGE);
-        RCLCPP_LINE_ERROR();
-
-        const robot_status_msgs::msg::SensorStatus &battery_state_null_status = this->build_sensor_status(
-            RCL_BATTERY_STATE_STATUS_HEADER_FRAME_ID,
-            RCL_BATTERY_STATE_STATUS_NULL_STATUS_CODE,
-            RCL_BATTERY_STATE_STATUS_NULL_STATUS_MESSAGE);
-
-        this->battery_state_status_publisher_->publish(battery_state_null_status);
-    }
-    else
-    {
-        RCLCPP_INFO(this->node_ptr_->get_logger(), RCL_BATTERY_STATE_STATUS_OK_STATUS_MESSAGE);
-        RCLCPP_LINE_INFO();
-
-        const robot_status_msgs::msg::SensorStatus &battery_state_ok_status = this->build_sensor_status(
-            RCL_BATTERY_STATE_STATUS_HEADER_FRAME_ID,
-            RCL_BATTERY_STATE_STATUS_OK_STATUS_CODE,
-            RCL_BATTERY_STATE_STATUS_OK_STATUS_MESSAGE);
-
-        this->battery_state_status_publisher_->publish(battery_state_ok_status);
-        this->battery_state_cb_ = nullptr;
-    }
 }
 
 std_msgs::msg::Header sensor_status_publisher::StatusPublisher::build_sensor_status_header(const char *header_frame_id)
@@ -298,7 +270,20 @@ void sensor_status_publisher::StatusPublisher::gps_subscription_cb(const sensor_
     this->gps_cb_ = gps_subscription_cb_data;
 }
 
-void sensor_status_publisher::StatusPublisher::battery_state_subscription_cb(const sensor_msgs::msg::BatteryState::SharedPtr battery_state_subscription_cb_data)
+void sensor_status_publisher::StatusPublisher::battery_error_status_publish(int32_t status_code, const char *status_message)
 {
-    this->battery_state_cb_ = battery_state_subscription_cb_data;
+    const robot_status_msgs::msg::SensorStatus &battery_state_error_status = this->build_sensor_status(
+        RCL_BATTERY_STATE_STATUS_HEADER_FRAME_ID,
+        status_code,
+        status_message);
+
+    this->battery_state_status_publisher_->publish(battery_state_error_status);
+}
+
+void sensor_status_publisher::StatusPublisher::battery_error_status_subscription_cb(const robot_status_msgs::msg::SensorStatus::SharedPtr battery_error_status_subscription_cb_data)
+{
+    const int32_t &status_code = battery_error_status_subscription_cb_data->status_code;
+    const char *status_message = battery_error_status_subscription_cb_data->status_message.c_str();
+
+    this->battery_error_status_publish(status_code, status_message);
 }
