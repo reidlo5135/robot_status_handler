@@ -32,8 +32,8 @@ namespace sensor_status_publisher
         sensor_msgs::msg::BatteryState::SharedPtr battery_state_cb_;
         rclcpp::CallbackGroup::SharedPtr battery_state_status_publisher_cb_group_;
         rclcpp::Publisher<robot_status_msgs::msg::SensorStatus>::SharedPtr battery_state_status_publisher_;
-        rclcpp::CallbackGroup::SharedPtr battery_state_subscription_cb_group_;
-        rclcpp::Subscription<sensor_msgs::msg::BatteryState>::SharedPtr battery_state_subscription_;
+        rclcpp::CallbackGroup::SharedPtr battery_error_status_subscription_cb_group_;
+        rclcpp::Subscription<robot_status_msgs::msg::SensorStatus>::SharedPtr battery_error_status_subscription_;
 
         void flag_rcl_connections(const char *connection_type, const char *connection_name);
         void timer_callback();
@@ -42,7 +42,8 @@ namespace sensor_status_publisher
         void imu_subscription_cb(const sensor_msgs::msg::Imu::SharedPtr imu_subscription_cb_data);
         void scan_subscription_cb(const sensor_msgs::msg::LaserScan::SharedPtr scan_subscription_cb_data);
         void gps_subscription_cb(const sensor_msgs::msg::NavSatFix::SharedPtr gps_subscription_cb_data);
-        void battery_state_subscription_cb(const sensor_msgs::msg::BatteryState::SharedPtr battery_state_subscription_cb_data);
+        void battery_error_status_subscription_cb(const robot_status_msgs::msg::SensorStatus::SharedPtr battery_error_status_subscription_cb_data);
+        void battery_error_status_publish(int32_t status_code, const char *status_message);
 
     public:
         explicit StatusPublisher();
